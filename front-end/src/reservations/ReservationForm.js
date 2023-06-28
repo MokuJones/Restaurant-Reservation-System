@@ -49,6 +49,21 @@ function ReservationForm({ reservation }) {
 
     setReservationsError(null);
 
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    if (newReservation.reservation_date < currentDate) {
+      setReservationsError(
+        new Error("Reservation date cannot be a past date.")
+      );
+      return;
+    }
+
+    const mobileNumberPattern = /^\d{3}-\d{3}-\d{4}$/;
+  if (!mobileNumberPattern.test(newReservation.mobile_number)) {
+    setReservationsError(new Error("Invalid mobile number format. Please use the format xxx-xxx-xxxx. (numbers only)"));
+    return;
+  }
+
     let response;
     if (reservation) {
       response = await editReservation(
@@ -108,6 +123,7 @@ function ReservationForm({ reservation }) {
           <input
             id="mobile_number"
             type="tel"
+            placeholder="xxx-xxx-xxxx"
             name="mobile_number"
             onChange={handleChange}
             value={formData.mobile_number}
